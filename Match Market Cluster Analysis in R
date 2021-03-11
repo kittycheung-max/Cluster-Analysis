@@ -1,0 +1,41 @@
+> # Load data from csv file (don't use import function in R Studio)
+> mmv2 <- read.csv('Documents/Advanced Analytics/Full Funnel/Test 2/Match Market Test 2 Data 1.2.csv',row.names=1)
+> head(mmv2)
+
+> # Scale dataset to balance attribute weight
+> df <- mmv2
+> df <- scale(df)
+> head(df)
+
+> # Calculate distances
+> distance <- get_dist(df)
+> fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
+> fviz_nbclust(df, kmeans, method = "silhouette")
+
+> # Determine optimal number of clusters, 3 methods
+
+> fviz_nbclust(df, kmeans, method = "wss")
+
+> fviz_nbclust(df, kmeans, method = "silhouette")
+
+> fviz_gap_stat(gap_stat)
+
+> # Run kmeans clustering with optimal # of clusters, in this case 6)
+> set.seed(123)
+> final <- kmeans(df, 6, nstart = 25)
+> print(final)
+
+> # Export cluster data to csv
+> x <- final$cluster
+> head(x)
+> write.csv(x,"Documents/Advanced Analytics/Full Funnel/Match Market K-Means v2.2 clusters.csv", row.names = TRUE)
+
+> # Export distances to csv
+> library(reshape2)
+> dfdistance <- melt(as.matrix(distance), varnames = c("row", "col"))
+> dfdistance[df$row > df$col,]
+> head(dfdistance)
+> write.csv(dfdistance, 'Documents/Advanced Analytics/Full Funnel/Test 2/Match Market Test 2 Distance 1.2.csv')
+
+> # Check degree of influence of each respective attribute on the clusters
+> final$centers
